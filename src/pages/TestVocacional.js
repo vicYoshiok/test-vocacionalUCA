@@ -515,3 +515,12 @@ const TestVocacional = () => {
 };
 
 export default TestVocacional;
+
+/**
+ * 
+ * User::create([
+    'name' => 'Administrador',
+    'email' => 'desarrollo.mkt@ucuauhtemoc.edu.mx',
+    'password' => bcrypt('12345678'),
+]);
+ */
