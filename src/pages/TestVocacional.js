@@ -12,12 +12,30 @@ const areas = {
 };
 
 const areaDescriptions = {
-  R: "Personas prácticas, activas y enfocadas en el hacer. Prefieren tareas físicas, técnicas o manuales.",
-  I: "Personas analíticas, lógicas y observadoras. Disfrutan investigar y resolver problemas complejos.",
-  A: "Personas imaginativas, creativas y expresivas. Disfrutan comunicar ideas y emociones.",
-  S: "Personas empáticas, pacientes y solidarias. Disfrutan ayudar y trabajar en equipo.",
-  E: "Personas dinámicas, extrovertidas y con orientación a resultados. Disfrutan liderar y tomar decisiones.",
-  C: "Personas organizadas, detallistas y metódicas. Prefieren estructuras claras y procesos ordenados.",
+  R: {
+    description: "Este tipo de personas son prácticas, activas y orientadas a la acción. Prefieren tareas físicas, técnicas o manuales donde puedan ver resultados concretos y resolver problemas de manera directa. Prefieres moverte, construir, reparar o experimentar, más que quedarte solo en la teoría. Te sientes cómodo en actividades donde puedes usar tus manos, herramientas o tecnología para crear o mejorar algo. Sueles tener buena coordinación, paciencia y gusto por los desafíos que implican precisión o trabajo técnico. Te atraen los entornos estructurados, claros y funcionales, o aquellos donde puedas estar al aire libre y mantenerte en movimiento.",
+    careers: ["Veterinaria", "Ingeniería Civil", "Arquitectura", "Gastronomía y Negocios", "Ingeniería en Sistemas Computacionales"]
+  },
+  I: {
+    description: "Este perfil se relaciona con personas curiosas, analíticas y observadoras. Te gusta entender el porqué de las cosas, descubrir cómo funcionan los procesos y buscar explicaciones más allá de lo evidente. No te conformas con respuestas superficiales; disfrutas pensar, analizar, experimentar y comprobar tus ideas. Tiendes a ser alguien reflexivo, paciente y detallista, que prefiere trabajar con información, datos o teorías antes que improvisar. Te motiva aprender constantemente, resolver problemas complejos y encontrar soluciones lógicas o científicas. Te gusta entender cómo funciona el cuerpo, cómo piensan las personas o cómo se puede mejorar algo con base en evidencia.",
+    careers: ["Médico Cirujano", "Nutrición", "Psicología", "Kinesiología", "Ingeniería en Sistemas Computacionales", "Ingeniería para Diseño y Desarrollo de Software", "Odontología"]
+  },
+  A: {
+    description: "Este perfil se relaciona con personas imaginativas, expresivas, sensibles y abiertas al cambio. Son creativas, disfrutan comunicar ideas, emociones o historias a través de distintos lenguajes visuales, sonoros o narrativos. Tienes gusto por el diseño, la moda, los medios digitales o cualquier actividad que permita innovar sin muchas restricciones. Te sientes cómodo en ambientes libres, flexibles y visualmente estimulantes, donde puedas ser tú mismo y no haya tantas reglas que limiten tu creatividad. Tienes facilidad para pensar fuera de lo común, conectar ideas diferentes y transformar lo cotidiano en algo único. Disfrutas crear proyectos propios y ver cómo tus ideas cobran vida.",
+    careers: ["Diseño Gráfico y Medios Digitales", "Diseño e Imagen de la Moda", "Comunicación y Producción Audiovisual", "Mercadotecnia Digital", "Arquitectura"]
+  },
+  S: {
+    description: "Personas con este perfil tienen una fuerte inclinación hacia el servicio, el acompañamiento y la mejora del entorno social. Eres alguien que escucha con atención, comprende las emociones de los demás y busca acompañar, enseñar o cuidar. Te resulta natural trabajar en equipo, colaborar y crear ambientes de confianza. Prefieres actividades donde puedan contribuir al crecimiento, la salud o la armonía de los demás. Te sientes realizado cuando puedes apoyar, orientar o motivar a otras personas, y tiendes a elegir actividades donde se promueva la salud, la educación o la justicia.",
+    careers: ["Psicología", "Enfermería", "Kinesiología", "Derecho", "Médico Cirujano", "Odontología"]
+  },
+  E: {
+    description: "Quienes se identifican con este perfil son dinámicos, extrovertidos, ambiciosos y con orientación a resultados. Te gusta tomar la iniciativa, liderar proyectos y proponer nuevas ideas. Tiendes a asumir responsabilidades con entusiasmo y disfrutas sentir que tus decisiones pueden generar impacto. Eres sociable, persuasivo y creativo, con facilidad para convencer, inspirar o motivar a los demás. Te interesa organizar, dirigir o emprender. Te motiva la posibilidad de superarte, alcanzar metas y crear algo propio. Te adaptas bien a la presión y ves los obstáculos como oportunidades para avanzar.",
+    careers: ["Administración y Gestión Empresarial", "Comercio y Negocios Internacionales", "Mercadotecnia Digital", "Gastronomía y Administración de Negocios", "Derecho", "Comunicación"]
+  },
+  C: {
+    description: "Este perfil agrupa a personas organizadas, detallistas, responsables y metódicas. Te gusta que las cosas estén en orden y disfrutas seguir procedimientos claros. Valoras la estabilidad, la seguridad y el saber exactamente qué se espera de ti. Eres detallista, metódico y cuidadoso en tu trabajo. Te sientes cómodo cuando puedes planear, registrar, clasificar o manejar información, y te molesta cuando las cosas se hacen sin estructura o sin claridad. Prefieres ambientes tranquilos y organizados, donde puedas aplicar tu sentido de responsabilidad y tu gusto por la exactitud.",
+    careers: ["Contador Público", "Administración y Gestión Empresarial", "Comercio y Negocios Internacionales", "Derecho"]
+  }
 };
 
 const TestVocacional = () => {
@@ -66,11 +84,9 @@ const TestVocacional = () => {
     setShowResults(true);
   };
 
-  // Reemplaza la función saveResults
   const saveResults = async () => {
     const results = calculateResults();
 
-    // Calculamos porcentajes igual que antes
     const maxPointsPerArea = {};
     Object.keys(areas).forEach((area) => {
       const questionsInArea = questions.flat().filter((q) => q.area === area).length;
@@ -83,41 +99,31 @@ const TestVocacional = () => {
         Math.round((score / maxPointsPerArea[area]) * 100),
       ])
     );
-     const payload = {
-    usuario,
-    resultados: results,
-    porcentajes: percentages,
-    respuestas: answers
-  };
-    try {
-    const response = await fetch("http://localhost:8000/api/guardar-resultado", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload),
-      credentials: "include" // <--- si quieres enviar cookies o autenticación
-    });
-    const data = await response.json();
-    alert(data.message);
-  } catch (error) {
-    console.error(error);
-    alert("Error al guardar los resultados");
-  }
-
     
-
-    // Llamamos a la función externa para generar PDF
-   /* exportResultsToPdf({
+    const payload = {
       usuario,
-      results,
-      percentages,
-      questions,
-      areas,
-      areaDescriptions,
-      logoUrl: "../logo.png",
-    });*/
-     exportResultsToPdf();
+      resultados: results,
+      porcentajes: percentages,
+      respuestas: answers
+    };
+
+    try {
+      const response = await fetch("http://localhost:8000/api/guardar-resultado", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload),
+        credentials: "include"
+      });
+      const data = await response.json();
+      alert(data.message);
+    } catch (error) {
+      console.error(error);
+      alert("Error al guardar los resultados");
+    }
+
+    exportResultsToPdf();
   };
 
   if (showResults) {
@@ -177,86 +183,205 @@ const TestVocacional = () => {
             <p className="text-center text-muted">Cargando datos del usuario...</p>
           )}
 
-          {/* Tarjetas top */}
+          {/* RESULTADO PRINCIPAL DESTACADO */}
           <div className="mb-5">
-            <h4 className="fw-semibold mb-3 text-center">Tus áreas de mayor afinidad</h4>
-            <div className="row g-3">
+            <div className="text-center mb-4">
+              <h3 className="fw-bold text-success mb-2">
+                <i className="bi bi-trophy-fill me-2"></i>
+                Tu Perfil Vocacional Principal
+              </h3>
+              <p className="text-muted">Basado en tus respuestas, estas son tus áreas de mayor afinidad</p>
+            </div>
+
+            <div className="row g-4">
               {topAreas.map(([area, pct]) => (
-                <div key={area} className="col-md-6">
+                <div key={area} className="col-12">
                   <div 
-                    className="card text-white p-4 shadow h-100 rounded-3"
-                    style={{ backgroundColor: areas[area].color }}
+                    className="card text-white p-4 shadow h-100 rounded-4 border-4 border-white"
+                    style={{ 
+                      backgroundColor: areas[area].color,
+                      background: `linear-gradient(135deg, ${areas[area].color} 0%, ${areas[area].color}99 100%)`
+                    }}
                   >
-                    <div className="d-flex align-items-center mb-3">
-                      <div 
-                        className="rounded-circle d-flex align-items-center justify-content-center me-3"
-                        style={{ width: "50px", height: "50px", backgroundColor: "rgba(255,255,255,0.2)" }}
-                      >
-                        <span className="fw-bold">{pct}%</span>
+                    <div className="row align-items-center">
+                      <div className="col-md-3 text-center mb-3 mb-md-0">
+                        <div 
+                          className="rounded-circle d-flex align-items-center justify-content-center mx-auto"
+                          style={{ 
+                            width: "100px", 
+                            height: "100px", 
+                            backgroundColor: "rgba(255,255,255,0.2)",
+                            border: "4px solid rgba(255,255,255,0.3)"
+                          }}
+                        >
+                          <span className="fw-bold display-6">{pct}%</span>
+                        </div>
+                        <h4 className="fw-bold mt-2 mb-0">{areas[area].name}</h4>
                       </div>
-                      <h5 className="fw-bold mb-0">{areas[area].name}</h5>
+                      
+                      <div className="col-md-6">
+                        <div className="mb-3">
+                          <h5 className="fw-bold mb-3">Descripción del Perfil</h5>
+                          <p className="mb-0" style={{ lineHeight: "1.6" }}>
+                            {areaDescriptions[area].description}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="col-md-3">
+                        <div className="bg-white text-dark p-3 rounded-3 h-100">
+                          <h6 className="fw-bold text-center mb-3" style={{ color: areas[area].color }}>
+                            <i className="bi bi-bookmark-star-fill me-2"></i>
+                            Carreras Afines en nuestra oferta educativa
+                          </h6>
+                          <div className="d-flex flex-wrap gap-2 justify-content-center">
+                            {areaDescriptions[area].careers.map((carrera, index) => (
+                              <span 
+                                key={index}
+                                className="badge p-2 px-3 rounded-pill"
+                                style={{ 
+                                  backgroundColor: areas[area].color,
+                                  color: "white",
+                                  fontSize: "0.85rem"
+                                }}
+                              >
+                                {carrera}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <p className="mb-0">{areaDescriptions[area]}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Tabla de puntuaciones */}
+          {/* TODAS LAS ÁREAS EVALUADAS */}
           <div className="mb-4">
-            <h4 className="fw-semibold mb-3">Puntuaciones por área</h4>
-            <p className="text-muted mb-3">
-              <em>La puntuación indica puntos obtenidos sobre el máximo posible en cada área.</em>
-            </p>
-            <div className="table-responsive">
-              <table className="table table-hover align-middle shadow-sm rounded overflow-hidden">
-                <thead className="table-primary">
-                  <tr>
-                    <th>Área</th>
-                    <th>Puntuación</th>
-                    <th>Porcentaje</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {sortedAreas.map(([area, score]) => {
-                    const maxScore = questions.flat().filter((q) => q.area === area).length * 4;
-                    const pct = percentages[area];
-                    return (
-                      <tr key={area}>
-                        <td>
+            <h4 className="fw-semibold mb-3 text-center">
+              <i className="bi bi-bar-chart-fill me-2"></i>
+              Resultados Completos por Área
+            </h4>
+            
+            <div className="row g-3">
+              {sortedAreas.map(([area, score]) => {
+                const maxScore = questions.flat().filter((q) => q.area === area).length * 4;
+                const pct = percentages[area];
+                const isTopArea = topAreas.some(([topArea]) => topArea === area);
+                
+                return (
+                  <div key={area} className="col-lg-6">
+                    <div 
+                      className={`card h-100 shadow-sm border-0 ${isTopArea ? 'border-3 border-warning' : ''}`}
+                    >
+                      <div className="card-body">
+                        <div className="d-flex justify-content-between align-items-start mb-3">
                           <div className="d-flex align-items-center">
                             <div 
-                              className="rounded-circle me-2"
-                              style={{ width: "12px", height: "12px", backgroundColor: areas[area].color }}
+                              className="rounded-circle me-3"
+                              style={{ 
+                                width: "20px", 
+                                height: "20px", 
+                                backgroundColor: areas[area].color 
+                              }}
                             ></div>
-                            {areas[area].name}
+                            <h5 className="card-title mb-0 fw-bold">{areas[area].name}</h5>
+                            {isTopArea && (
+                              <span className="badge bg-warning text-dark ms-2">
+                                <i className="bi bi-star-fill me-1"></i>Principal
+                              </span>
+                            )}
                           </div>
-                        </td>
-                        <td className="fw-semibold">{score} / {maxScore}</td>
-                        <td>
-                          <div className="d-flex align-items-center">
-                            <div className="progress flex-grow-1 me-2" style={{ height: "20px", borderRadius: "10px" }}>
-                              <div
-                                className="progress-bar"
-                                role="progressbar"
-                                style={{
-                                  width: `${pct}%`,
-                                  backgroundColor: areas[area].color,
-                                  fontWeight: "bold",
-                                  transition: "width 1s ease-in-out"
+                          <div className="text-end">
+                            <div className="fw-bold fs-5" style={{ color: areas[area].color }}>
+                              {pct}%
+                            </div>
+                            <small className="text-muted">{score}/{maxScore} puntos</small>
+                          </div>
+                        </div>
+                        
+                        <div className="progress mb-3" style={{ height: "20px", borderRadius: "10px" }}>
+                          <div
+                            className="progress-bar"
+                            role="progressbar"
+                            style={{
+                              width: `${pct}%`,
+                              backgroundColor: areas[area].color,
+                              fontWeight: "bold",
+                              transition: "width 1s ease-in-out"
+                            }}
+                          >
+                            {pct}%
+                          </div>
+                        </div>
+
+                        <div className="mt-3">
+                          <h6 className="fw-semibold mb-2">
+                            <i className="bi bi-briefcase me-2"></i>
+                            Carreras Relacionadas que ofrecemos:
+                          </h6>
+                          <div className="d-flex flex-wrap gap-1">
+                            {areaDescriptions[area].careers.slice(0, 3).map((carrera, index) => (
+                              <span 
+                                key={index}
+                                className="badge p-1 px-2 rounded"
+                                style={{ 
+                                  backgroundColor: areas[area].color + "20",
+                                  color: areas[area].color,
+                                  border: `1px solid ${areas[area].color}`,
+                                  fontSize: "0.75rem"
                                 }}
                               >
-                                {pct}%
-                              </div>
-                            </div>
+                                {carrera}
+                              </span>
+                            ))}
+                            {areaDescriptions[area].careers.length > 3 && (
+                              <span className="badge bg-light text-muted">
+                                +{areaDescriptions[area].careers.length - 3} más
+                              </span>
+                            )}
                           </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* RECOMENDACIONES FINALES */}
+          <div className="card bg-primary  mt-4">
+            <div className="card-body text-center">
+              <h4 className="fw-bold mb-3">
+                <i className="bi bi-lightbulb-fill me-2"></i>
+                Próximos Pasos Recomendados
+              </h4>
+              <div className="row">
+                <div className="col-md-4 mb-3">
+                  <div className="bg-white bg-opacity-20 p-3 rounded-3 h-100">
+                    <i className="bi bi-search-heart display-6 mb-2"></i>
+                    <h6>Investiga Carreras</h6>
+                    <small>Profundiza en las carreras que más te llamaron la atención</small>
+                  </div>
+                </div>
+                <div className="col-md-4 mb-3">
+                  <div className="bg-white bg-opacity-20 p-3 rounded-3 h-100">
+                    <i className="bi bi-people display-6 mb-2"></i>
+                    <h6>Habla con Profesionales</h6>
+                    <small>Conecta con personas que ejerzan las profesiones de tu interés</small>
+                  </div>
+                </div>
+                <div className="col-md-4 mb-3">
+                  <div className="bg-white bg-opacity-20 p-3 rounded-3 h-100">
+                    <i className="bi bi-journal-check display-6 mb-2"></i>
+                    <h6>Planifica tu Futuro</h6>
+                    <small>Establece metas y pasos concretos para alcanzar tus objetivos</small>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -265,7 +390,7 @@ const TestVocacional = () => {
             <button className="btn btn-outline-secondary me-3 px-4 py-2 rounded-3" onClick={() => window.location.reload()}>
               <i className="bi bi-arrow-repeat me-2"></i>Realizar nuevamente
             </button>
-            <button className="btn btn-primary px-4 py-2 rounded-3" onClick={saveResults}>
+            <button className="btn btn-success px-4 py-2 rounded-3" onClick={saveResults}>
               <i className="bi bi-download me-2"></i>Guardar resultados
             </button>
           </div>
@@ -515,12 +640,3 @@ const TestVocacional = () => {
 };
 
 export default TestVocacional;
-
-/**
- * 
- * User::create([
-    'name' => 'Administrador',
-    'email' => 'desarrollo.mkt@ucuauhtemoc.edu.mx',
-    'password' => bcrypt('12345678'),
-]);
- */
