@@ -43,17 +43,18 @@ const handleSubmit = async (e) => {
     // Guardar datos del usuario localmente
     localStorage.setItem("datosUsuario", JSON.stringify(form));
 
-    // Si deseas enviar a HubSpot, descomenta esto:
-    /*
+    // envio a hubspot
+    
     await axios.post(
       `https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formId}`,
       payload
     );
-    */
-
+    
+    // manejo de registro exitoso 
     alert("¡Registro exitoso!");
     navigate("/test");
   } catch (error) {
+    //manejo de registro fallido
     console.error("Error al registrar en HubSpot:", error);
     alert("Hubo un error al registrar tus datos.");
   }
