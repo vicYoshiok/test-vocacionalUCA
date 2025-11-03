@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import Registro from "./pages/Registro";
 import TestVocacional from "./pages/TestVocacional";
 import Resultado from "./pages/ResultadosTest";
 
 function App() {
-  // Estado global simple para el usuario y sus resultados
   const [userId, setUserId] = useState(null);
   const [resultado, setResultado] = useState(null);
 

@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import headerImg from "../assets/testOrientacionVocacional.jpg";
 function Registro({ setUserId }) {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
     nombre: "",
-    lastname: "",
+    apellido: "",
     correo: "",
     telefono: "",
     edad: "",
@@ -69,7 +69,7 @@ const handleSubmit = async (e) => {
             {/* Imagen superior */}
             <div className="w-100">
               <img
-                src="https://www.ucuauhtemoc.edu.mx/hubfs/sitio/generales/universidad-cuauhtemoc-campus-aguascalientes-header-logo.svg"
+                src={headerImg}
                 alt="Header"
                 className="img-fluid w-100"
                 style={{ height: "180px", objectFit: "cover" }}
@@ -77,9 +77,9 @@ const handleSubmit = async (e) => {
             </div>
 
             <div className="card-body p-4">
-              <h2 className="text-center text-primary mb-4">
+              <h1 className="text-center mb-4" style={{color:'#24418b' }}>
                 Test Vocacional
-              </h2>
+              </h1>
               <p className="text-center">
                 Esta prueba vocacional ayudará a conocer tu perfil profesional.
               </p>
@@ -178,7 +178,7 @@ const handleSubmit = async (e) => {
                 </div>
 
                 <div className="d-grid mt-4" >
-                  <button type="submit" className="btn btn-primary btn-lg">
+                  <button type="submit" className="btn btn-primary" style={{background:'#24418b' }}>
                     Comenzar Test
                   </button>
                 </div>

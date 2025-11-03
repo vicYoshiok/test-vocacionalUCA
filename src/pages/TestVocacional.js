@@ -49,11 +49,11 @@ const TestVocacional = () => {
     const datos = localStorage.getItem("datosUsuario");
     if (datos) setUsuario(JSON.parse(datos));
   }, []);
-
+  //guardado de las preguntas en un diccionario 
   const handleAnswer = (id, value) => {
     setAnswers((prev) => ({ ...prev, [id]: parseInt(value) }));
   };
-
+//cambio de pagina siguiente del test, evaluando si se contestaron todas las preguntas
   const nextPage = () => {
     const currentQuestions = questions[currentPage];
     const unanswered = currentQuestions.filter((q) => answers[q.id] === undefined);
@@ -63,11 +63,12 @@ const TestVocacional = () => {
     }
     if (currentPage < questions.length - 1) setCurrentPage(currentPage + 1);
   };
-
+//regreso a pagina anterior 
   const prevPage = () => {
     if (currentPage > 0) setCurrentPage(currentPage - 1);
   };
 
+//calcula resultados de area del test  unicamente
   const calculateResults = () => {
     const scores = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
     questions.flat().forEach((q) => {
@@ -75,7 +76,7 @@ const TestVocacional = () => {
     });
     return scores;
   };
-
+//handle para corroborar las preguntas 
   const handleSubmit = () => {
     const totalQuestions = questions.flat().length;
     if (Object.keys(answers).length < totalQuestions) {
@@ -84,47 +85,84 @@ const TestVocacional = () => {
     setShowResults(true);
   };
 
-  const saveResults = async () => {
-    const results = calculateResults();
+const saveResults = async () => {
+  const results = calculateResults();
+//obtenemos el puntaje por area
+  const maxPointsPerArea = {};
+  Object.keys(areas).forEach((area) => {
+    const questionsInArea = questions.flat().filter((q) => q.area === area).length;
+    maxPointsPerArea[area] = questionsInArea * 4;
+  });
+//calculamos porcentajes
+  const percentages = Object.fromEntries(
+    Object.entries(results).map(([area, score]) => [
+      area,
+      Math.round((score / maxPointsPerArea[area]) * 100),
+    ])
+  );
 
-    const maxPointsPerArea = {};
-    Object.keys(areas).forEach((area) => {
-      const questionsInArea = questions.flat().filter((q) => q.area === area).length;
-      maxPointsPerArea[area] = questionsInArea * 4;
-    });
+  // Laravel espera exactamente estos campos dentro de 'usuario' esto es exactamente lo que se guarda en la bd
+  const payload = {
+    usuario: {
+      nombre: usuario?.nombre || "",
+      lastname: usuario?.lastname || "",
+      correo: usuario?.correo || "",
+      telefono: usuario?.telefono || "",
+      edad: Number(usuario?.edad) || 0,
+      escuela: usuario?.escuela || "",
+    },
+    resultados: {
+      R: results.R || 0,
+      I: results.I || 0,
+      A: results.A || 0,
+      S: results.S || 0,
+      E: results.E || 0,
+      C: results.C || 0,
+    },
+    porcentajes: {
+      R: percentages.R || 0,
+      I: percentages.I || 0,
+      A: percentages.A || 0,
+      S: percentages.S || 0,
+      E: percentages.E || 0,
+      C: percentages.C || 0,
+    },
+    respuestas: answers || [],
+  };
+//peticion fetch l ednpoint 
+  try {
+    console.log("Payload a enviar:", payload);
 
-    const percentages = Object.fromEntries(
-      Object.entries(results).map(([area, score]) => [
-        area,
-        Math.round((score / maxPointsPerArea[area]) * 100),
-      ])
-    );
-    
-    const payload = {
-      usuario,
-      resultados: results,
-      porcentajes: percentages,
-      respuestas: answers
-    };
-
-    try {
-      const response = await fetch("http://localhost:8000/api/guardar-resultado", {
+    const response = await fetch(
+      "https://vocacional.ucuauhtemoc.edu.mx/orientacion-vocacional/public/api/guardar-resultado",
+      {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          Accept: "application/json",
         },
         body: JSON.stringify(payload),
-        credentials: "include"
-      });
-      const data = await response.json();
-      alert(data.message);
-    } catch (error) {
-      console.error(error);
-      alert("Error al guardar los resultados");
+      }
+    );
+
+    console.log("Respuesta status:", response.status);
+
+    const data = await response.json();
+    console.log("Respuesta del servidor:", data);
+
+    if (!response.ok) {
+      throw new Error(data.message || `Error ${response.status}`);
     }
 
+    alert(data.message || "Resultados guardados exitosamente");
+    //llamamos a la funcion que crea el pdf
     exportResultsToPdf();
-  };
+  } catch (error) {
+    console.error("Error completo:", error);
+    alert("Error al guardar los resultados del test, intentalo nuevamente ");
+  }
+};
+
 
   if (showResults) {
     const results = calculateResults();

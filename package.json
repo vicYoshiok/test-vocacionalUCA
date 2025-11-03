@@ -2,6 +2,7 @@
   "name": "test-vocacional",
   "version": "0.1.0",
   "private": true,
+   "homepage": "https://vocacional.ucuauhtemoc.edu.mx/test-vocacional-2025",
   "dependencies": {
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",

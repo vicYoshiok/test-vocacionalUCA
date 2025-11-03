@@ -1,0 +1,5 @@
+RewriteEngine On
+
+# Para cPanel - redirigir todo a public/
+RewriteCond %{REQUEST_URI} !^/api-vocacional/public/
+RewriteRule ^(.*)$ public/$1 [L]
